@@ -19,7 +19,7 @@
      <rect>
       <x>20</x>
       <y>270</y>
-      <width>440</width>
+      <width>451</width>
       <height>150</height>
      </rect>
     </property>
@@ -1094,7 +1094,7 @@
       <number>40</number>
      </property>
     </widget>
-    <widget class="QLabel" name="label_24">
+    <widget class="QLabel" name="d">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -1212,7 +1212,7 @@
       <string>Isteresi [sec]:</string>
      </property>
     </widget>
-    <widget class="QLCDNumber" name="tmpcpu_12">
+    <widget class="QLCDNumber" name="tmpcrp">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -1240,7 +1240,7 @@
       <number>10</number>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnplusmin_7">
+    <widget class="QPushButton" name="btncrppiu">
      <property name="geometry">
       <rect>
        <x>60</x>
@@ -1258,7 +1258,7 @@
       <string>+</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnminmin_7">
+    <widget class="QPushButton" name="btncrpmeno">
      <property name="geometry">
       <rect>
        <x>100</x>
@@ -1297,7 +1297,7 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnpompaon_2">
+    <widget class="QPushButton" name="btnlucion">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -1313,7 +1313,7 @@
       <string>ON</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnpompaoff_2">
+    <widget class="QPushButton" name="btnlucioff">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -1457,26 +1457,6 @@
     </widget>
    </widget>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuMain">
-    <property name="title">
-     <string>Main</string>
-    </property>
-   </widget>
-   <addaction name="menuMain"/>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
