@@ -11,7 +11,7 @@ from PyQt5 import QtGui
 from interfaccia import Ui_MainWindow
 
 
-class finestra(QtWidgets.QMainWindow):  # se la finestra è main allora non va widget
+class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non va widget
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -93,6 +93,23 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main allora non va w
             self.ui.tmpoffmin.setProperty("value", self.valori[tasto])
             self.ui.tmpoffh.setProperty("value", self.valori[tipo])
 
+    def gest_timer_orario(self):
+        time = QtCore.QTime.currentTime()
+        accensione = QtCore.QTime(self.valori['oraon'], self.valori['minon'], 0)
+        spegnimento = QtCore.QTime(self.valori['oraoff'], self.valori['minoff'], 0)
+        if self.bandierine['autotimer']:
+            if accensione <= time <= spegnimento:
+                if self.bandierine['okacqua']:
+                    self.uscite['acqua']=1
+                if self.bandierine['okaria']:
+                    self.uscite['aria']=1
+            else:
+                if self.bandierine['okacqua']:
+                    self.uscite['acqua']=0
+                if self.bandierine['okaria']:
+                    self.uscite['aria']=0
+
+
     def gest_temp_fan(self, tasto, valore):
         if valore == 'piu':
             # print('premuto tasto piu')
@@ -147,8 +164,9 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main allora non va w
         self.ui.lcdclock.display(text)
         self.gestventolacpu()
         self.chk_handler()
+        self.gest_timer_orario()
 
-        # print(self.uscite)
+        print(self.uscite)
         # print(self.valori)
         # print(self.bandierine)
 
@@ -157,8 +175,8 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main allora non va w
     # self.show()
 
 
-if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    w = finestra()
-    w.show()
-    sys.exit(app.exec_())
+# if __name__ == '__main__':
+#     app = QtWidgets.QApplication(sys.argv)
+#     w = finestra()
+#     w.show()
+#     sys.exit(app.exec_())
