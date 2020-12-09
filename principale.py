@@ -23,7 +23,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         # variabili per riassumere lo stato della finestra
         self.uscite = {'acqua': 0, 'aria': 0, 'ventola': 0}
         self.bandierine = {'autotimer': True, 'okacqua': True, 'okaria': True}
-        self.valori = {'acc': 40, 'delta': 5, 'oraon': 9, 'minon': 0, 'oraoff': 21, 'minoff': 0}
+        self.valori = {'acc': 40, 'delta': 5, 'oraon': 9, 'minon': 0, 'oraoff': 21, 'minoff': 0, 'vbatt': 13.8}
 
         # setto le gariabili del raspberry, attebzioen quando lo fai su PC
         # self.cpuout = 12  # PWM pin connected to LED
@@ -100,15 +100,14 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         if self.bandierine['autotimer']:
             if accensione <= time <= spegnimento:
                 if self.bandierine['okacqua']:
-                    self.uscite['acqua']=1
+                    self.uscite['acqua'] = 1
                 if self.bandierine['okaria']:
-                    self.uscite['aria']=1
+                    self.uscite['aria'] = 1
             else:
                 if self.bandierine['okacqua']:
-                    self.uscite['acqua']=0
+                    self.uscite['acqua'] = 0
                 if self.bandierine['okaria']:
-                    self.uscite['aria']=0
-
+                    self.uscite['aria'] = 0
 
     def gest_temp_fan(self, tasto, valore):
         if valore == 'piu':
@@ -156,6 +155,11 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             self.uscite['ventola'] = 0
         # print(self.uscite['ventola'])
 
+    def gest_vbatt(self):
+        # print(self.valori['vbatt'])
+        self.ui.tmpvbatt.setProperty("value", self.valori['vbatt'])
+        # print('vbatt')
+
     def showTime(self):
         time = QtCore.QTime.currentTime()
         text = time.toString('hh:mm')
@@ -165,6 +169,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.gestventolacpu()
         self.chk_handler()
         self.gest_timer_orario()
+        self.gest_vbatt()
 
         print(self.uscite)
         # print(self.valori)
@@ -173,7 +178,6 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
     # il codice va qua sopra
 
     # self.show()
-
 
 # if __name__ == '__main__':
 #     app = QtWidgets.QApplication(sys.argv)

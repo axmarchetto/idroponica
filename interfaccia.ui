@@ -1391,7 +1391,7 @@
     <property name="midLineWidth">
      <number>1</number>
     </property>
-    <widget class="QLCDNumber" name="tmpcpu_8">
+    <widget class="QLCDNumber" name="tmpvbatt">
      <property name="geometry">
       <rect>
        <x>40</x>
