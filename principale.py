@@ -21,10 +21,10 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.ui.setupUi(self)
         # se metto qua una variabile funzuiona
         # variabili per riassumere lo stato della finestra
-        self.uscite = {'acqua': 0, 'aria': 0, 'ventola': 0, 'pompaxy': 0, 'pompaphpiu': 0, 'pompaphmeno': 0}
+        self.uscite = {'acqua': 0, 'aria': 0, 'ventola': 0, 'pompaxy': 0, 'pompaphpiu': 0, 'pompaphmeno': 0, 'luci': 0}
         self.bandierine = {'autotimer': True, 'okacqua': True, 'okaria': True, 'crepuscolare': True, 'livacqua': True}
         self.valori = {'acc': 40, 'delta': 5, 'oraon': 9, 'minon': 0, 'oraoff': 21, 'minoff': 0, 'vbatt': 13.8,
-                       'tacqua': 22.4, 'ph': 7, 'EC': 2600}
+                       'tacqua': 22.4, 'ph': 7, 'EC': 2600, 'isteresiluce': 10}
 
         # setto le gariabili del raspberry, attebzioen quando lo fai su PC
         # self.cpuout = 12  # PWM pin connected to LED
@@ -69,13 +69,15 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.bandierine['autotimer'] = self.ui.ckbclockok.isChecked()
         self.bandierine['okacqua'] = self.ui.chkacquaok.isChecked()
         self.bandierine['okaria'] = self.ui.chkariaok.isChecked()
-        self.bandierine['crepuscolare']=self.ui.chkcrepuscolare.isChecked()
+        self.bandierine['crepuscolare'] = self.ui.chkcrepuscolare.isChecked()
         print(self.bandierine)
         # abilitazione tasti manuale
         self.ui.btnpompaon.setEnabled(not self.ui.ckbclockok.isChecked())
         self.ui.btnpompaoff.setEnabled(not self.ui.ckbclockok.isChecked())
         self.ui.btnariaon.setEnabled(not self.ui.ckbclockok.isChecked())
         self.ui.btnariaoff.setEnabled(not self.ui.ckbclockok.isChecked())
+        self.ui.btnlucion.setEnabled(not self.ui.chkcrepuscolare.isChecked())
+        self.ui.btnlucioff.setEnabled(not self.ui.chkcrepuscolare.isChecked())
 
     def gest_orario_on_off(self, tipo, tasto, valore):
         # print('premunto '+tasto+' '+valore)
