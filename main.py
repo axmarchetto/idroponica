@@ -1,11 +1,15 @@
 import sys
 
-# import RPi.GPIO as GPIO
+
 
 from principale import finestra
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 from PyQt5 import QtGui
+
+#da togliere i commenti su raspberry
+# import RPi.GPIO as GPIO
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

@@ -22,9 +22,11 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         # se metto qua una variabile funzuiona
         # variabili per riassumere lo stato della finestra
         self.uscite = {'acqua': 0, 'aria': 0, 'ventola': 0, 'pompaxy': 0, 'pompaphpiu': 0, 'pompaphmeno': 0, 'luci': 0}
+        self.ingressi = {'increpusc': 0}
         self.bandierine = {'autotimer': True, 'okacqua': True, 'okaria': True, 'crepuscolare': True, 'livacqua': True}
         self.valori = {'acc': 40, 'delta': 5, 'oraon': 9, 'minon': 0, 'oraoff': 21, 'minoff': 0, 'vbatt': 13.8,
-                       'tacqua': 22.4, 'ph': 7, 'EC': 2600, 'isteresiluce': 10}
+                       'tacqua': 22.4, 'ph': 7, 'EC': 2600, 'isteresi_luce': 10}
+        self.sts_isteresi = [0, 0]
 
         # setto le gariabili del raspberry, attebzioen quando lo fai su PC
         # self.cpuout = 12  # PWM pin connected to LED
@@ -39,7 +41,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         # GPIO.output(self.uscitaacua, False)
         # GPIO.output(self.uscitaaria, False)
 
-        self.variabile = -1
+        # self.variabile = -1
         # BOTTONI PER LA VENTOLA DELLA CPU
         self.ui.btnonfanpiu.clicked.connect(lambda: self.gest_temp_fan('acc', 'piu'))
         self.ui.btnonfanmeno.clicked.connect(lambda: self.gest_temp_fan('acc', 'meno'))
@@ -55,8 +57,12 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.ui.btnonmeno.clicked.connect(lambda: self.gest_orario_on_off('oraon', 'minon', 'meno'))
         self.ui.btnoffpiu.clicked.connect(lambda: self.gest_orario_on_off('oraoff', 'minoff', 'piu'))
         self.ui.btnoffmeno.clicked.connect(lambda: self.gest_orario_on_off('oraoff', 'minoff', 'meno'))
-
-        # metto il timer
+        # BOTTONI PER ACCENSIONE LUCI MANUALE E ISTERESI ACCENSIONE
+        self.ui.btnlucion.clicked.connect(lambda: self.gestione_manuale('luci', 'on'))
+        self.ui.btnlucioff.clicked.connect(lambda: self.gestione_manuale('luci', 'off'))
+        self.ui.btncrppiu.clicked.connect(lambda: self.gest_temp_fan('isteresi_luce', 'piu'))
+        self.ui.btncrpmeno.clicked.connect(lambda: self.gest_temp_fan('isteresi_luce', 'meno'))
+        # metto il timer per azioni una volta al secondo
         timer = QtCore.QTimer(self)
         timer.timeout.connect(self.showTime)
         timer.start(1000)  # in millisecondi
@@ -70,7 +76,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.bandierine['okacqua'] = self.ui.chkacquaok.isChecked()
         self.bandierine['okaria'] = self.ui.chkariaok.isChecked()
         self.bandierine['crepuscolare'] = self.ui.chkcrepuscolare.isChecked()
-        print(self.bandierine)
+        #print(self.bandierine)
         # abilitazione tasti manuale
         self.ui.btnpompaon.setEnabled(not self.ui.ckbclockok.isChecked())
         self.ui.btnpompaoff.setEnabled(not self.ui.ckbclockok.isChecked())
@@ -103,7 +109,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         accensione = QtCore.QTime(self.valori['oraon'], self.valori['minon'], 0)
         spegnimento = QtCore.QTime(self.valori['oraoff'], self.valori['minoff'], 0)
         if self.bandierine['autotimer']:
-            if accensione <= time <= spegnimento:
+            if accensione <= time <= spegnimento:  # confronta l'ora
                 if self.bandierine['okacqua']:
                     self.uscite['acqua'] = 1
                 if self.bandierine['okaria']:
@@ -126,16 +132,18 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             self.ui.tmponfan.setProperty("value", self.valori[tasto])
         if tasto == 'delta':
             self.ui.tmpdeltafan.setProperty("value", self.valori[tasto])
+        if tasto == 'isteresi_luce':
+            self.ui.tmpcrp.setProperty("value", self.valori[tasto])
 
     def gestione_manuale(self, cosa, stato):
         if stato == 'on':
             self.uscite[cosa] = 1
             # print('pompa ' + cosa + ' accesa')
-            # print(self.uscite[cosa])
+            print(self.uscite[cosa])
         else:
             self.uscite[cosa] = 0
             # print('pompa ' + cosa + ' spenta')
-            # print(self.uscite[cosa])
+            #print(self.uscite[cosa])
 
     def measure_temp(self):
         # dat ogliere la stringa  e lasciare il comando che inizia con os per raspberry
@@ -165,6 +173,26 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.ui.tmpvbatt.setProperty("value", self.valori['vbatt'])
         # print('vbatt')
 
+    def gest_tacqua(self):
+
+        self.ui.tmpacqua.setProperty("value", self.valori['tacqua'])
+
+
+    def gest_luce(self):
+        if self.ingressi['increpusc'] != self.sts_isteresi[0]:
+            if self.sts_isteresi[1] >= self.ui.tmpcrp.value():
+                self.sts_isteresi[0] = self.ingressi['increpusc']
+                self.sts_isteresi[1] = 0
+                # if self.bandierine['crepuscolare']:
+                #     self.uscite['luci'] = self.sts_isteresi[0]
+                #     print('uscita luce' + str(self.uscite['luci']))
+            else:
+                self.sts_isteresi[1] = self.sts_isteresi[1] + 1
+                print(self.sts_isteresi[1])
+        if self.bandierine['crepuscolare']:
+            self.uscite['luci'] = self.sts_isteresi[0]
+            print('uscita luce' + str(self.uscite['luci']))
+
     def showTime(self):
         time = QtCore.QTime.currentTime()
         text = time.toString('hh:mm')
@@ -175,8 +203,9 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.chk_handler()
         self.gest_timer_orario()
         self.gest_vbatt()
-
-        print(self.uscite)
+        self.gest_luce()
+        self.gest_tacqua()
+        # print(self.uscite)
         # print(self.valori)
         # print(self.bandierine)
 
