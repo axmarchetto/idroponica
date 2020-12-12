@@ -1,19 +1,22 @@
-import sys
-import os
 # import RPi.GPIO as GPIO
 
-from PyQt5 import QtWidgets
 from PyQt5 import QtCore
-from PyQt5 import QtGui
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import QThreadPool
+
+from interfaccia import Ui_MainWindow
+from appoggio import Worker
 
 # qua importo il builder che esce da qtdesigner
 # esempio
-from interfaccia import Ui_MainWindow
 
 
 class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non va widget
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.threadpool = QThreadPool()
+        print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
 
         # il codice va qua sotto
         # lancio la finestra che ho datto in qt designer
@@ -174,7 +177,6 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         # print('vbatt')
 
     def gest_tacqua(self):
-
         self.ui.tmpacqua.setProperty("value", self.valori['tacqua'])
 
 
@@ -193,6 +195,11 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             self.uscite['luci'] = self.sts_isteresi[0]
             print('uscita luce' + str(self.uscite['luci']))
 
+    def oh_no(self):
+        worker = Worker()
+        self.threadpool.start(worker)
+
+
     def showTime(self):
         time = QtCore.QTime.currentTime()
         text = time.toString('hh:mm')
@@ -205,13 +212,14 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.gest_vbatt()
         self.gest_luce()
         self.gest_tacqua()
+        self.oh_no()
+
         # print(self.uscite)
         # print(self.valori)
         # print(self.bandierine)
 
     # il codice va qua sopra
 
-    # self.show()
 
 # if __name__ == '__main__':
 #     app = QtWidgets.QApplication(sys.argv)
