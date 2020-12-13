@@ -3,7 +3,7 @@
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QThreadPool
-
+import time
 from interfaccia import Ui_MainWindow
 from appoggio import Worker
 
@@ -195,13 +195,25 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             self.uscite['luci'] = self.sts_isteresi[0]
             print('uscita luce' + str(self.uscite['luci']))
 
+    #GESTONE DEL MULTITHEREAD ESTERNO --- INIZIO
     def execute_this_fn(self):
-        print("Hello!")
+        for n in range(0, 5):
+            time.sleep(1)
+        return "Done."
+
+    def print_output(self, s):
+        print(s)
+
+    def thread_complete(self):
+        print("THREAD COMPLETE!")
 
     def oh_no(self):
         worker = Worker(self.execute_this_fn)
+        worker.signals.result.connect(self.print_output)
+        worker.signals.finished.connect(self.thread_complete)
         self.threadpool.start(worker)
 
+    # GESTONE DEL MULTITHEREAD ESTERNO --- FINE
 
     def showTime(self):
         time = QtCore.QTime.currentTime()
