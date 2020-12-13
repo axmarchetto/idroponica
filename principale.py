@@ -201,9 +201,13 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             #print('uscita luce' + str(self.uscite['luci']))
 
     # GESTONE DEL MULTITHEREAD ESTERNO --- INIZIO
-    def execute_this_fn(self):
+    def progress_fn(self, n):
+        print("%d%% done" % n)
+
+    def execute_this_fn(self, progress_callback):
         for n in range(0, 5):
             time.sleep(1)
+            progress_callback.emit(n * 100 / 4)
         return "Done."
 
     def print_output(self, s):
@@ -216,6 +220,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         worker = Worker(self.execute_this_fn)
         worker.signals.result.connect(self.print_output)
         worker.signals.finished.connect(self.thread_complete)
+        worker.signals.progress.connect(self.progress_fn)
         self.threadpool.start(worker)
 
     # GESTONE DEL MULTITHEREAD ESTERNO --- FINE
