@@ -7,6 +7,7 @@ import time
 from interfaccia import Ui_MainWindow
 from appoggio import Worker
 
+
 # qua importo il builder che esce da qtdesigner
 # esempio
 
@@ -70,6 +71,11 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         timer.timeout.connect(self.showTime)
         timer.start(1000)  # in millisecondi
 
+        # metto il timer per azioni una volta al secondo
+        timer10 = QtCore.QTimer(self)
+        timer10.timeout.connect(self.showTime10)
+        timer10.start(10000)  # in millisecondi
+
     # fine di init
 
     # GESTIONE DEI FLAG
@@ -79,7 +85,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.bandierine['okacqua'] = self.ui.chkacquaok.isChecked()
         self.bandierine['okaria'] = self.ui.chkariaok.isChecked()
         self.bandierine['crepuscolare'] = self.ui.chkcrepuscolare.isChecked()
-        #print(self.bandierine)
+        # print(self.bandierine)
         # abilitazione tasti manuale
         self.ui.btnpompaon.setEnabled(not self.ui.ckbclockok.isChecked())
         self.ui.btnpompaoff.setEnabled(not self.ui.ckbclockok.isChecked())
@@ -146,7 +152,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         else:
             self.uscite[cosa] = 0
             # print('pompa ' + cosa + ' spenta')
-            #print(self.uscite[cosa])
+            # print(self.uscite[cosa])
 
     def measure_temp(self):
         # dat ogliere la stringa  e lasciare il comando che inizia con os per raspberry
@@ -179,7 +185,6 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
     def gest_tacqua(self):
         self.ui.tmpacqua.setProperty("value", self.valori['tacqua'])
 
-
     def gest_luce(self):
         if self.ingressi['increpusc'] != self.sts_isteresi[0]:
             if self.sts_isteresi[1] >= self.ui.tmpcrp.value():
@@ -193,9 +198,9 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
                 print(self.sts_isteresi[1])
         if self.bandierine['crepuscolare']:
             self.uscite['luci'] = self.sts_isteresi[0]
-            print('uscita luce' + str(self.uscite['luci']))
+            #print('uscita luce' + str(self.uscite['luci']))
 
-    #GESTONE DEL MULTITHEREAD ESTERNO --- INIZIO
+    # GESTONE DEL MULTITHEREAD ESTERNO --- INIZIO
     def execute_this_fn(self):
         for n in range(0, 5):
             time.sleep(1)
@@ -207,7 +212,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
     def thread_complete(self):
         print("THREAD COMPLETE!")
 
-    def oh_no(self):
+    def gest_multithread(self):
         worker = Worker(self.execute_this_fn)
         worker.signals.result.connect(self.print_output)
         worker.signals.finished.connect(self.thread_complete)
@@ -227,17 +232,10 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.gest_vbatt()
         self.gest_luce()
         self.gest_tacqua()
-        self.oh_no()
 
-        # print(self.uscite)
-        # print(self.valori)
-        # print(self.bandierine)
+    def showTime10(self):
+        self.gest_multithread()
+
 
     # il codice va qua sopra
 
-
-# if __name__ == '__main__':
-#     app = QtWidgets.QApplication(sys.argv)
-#     w = finestra()
-#     w.show()
-#     sys.exit(app.exec_())
