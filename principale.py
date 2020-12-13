@@ -195,8 +195,11 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             self.uscite['luci'] = self.sts_isteresi[0]
             print('uscita luce' + str(self.uscite['luci']))
 
+    def execute_this_fn(self):
+        print("Hello!")
+
     def oh_no(self):
-        worker = Worker()
+        worker = Worker(self.execute_this_fn)
         self.threadpool.start(worker)
 
 
