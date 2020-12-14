@@ -10,14 +10,11 @@ class WorkerSignals(QObject):
     PYTHON
     Supported signals are:
 
-    finished
-    No data
+    finished No data
 
-    error
-        `tuple` (exctype, value, traceback.format_exc() )
+    error`tuple` (exctype, value, traceback.format_exc() )
 
-    result
-        `object` data returned from processing, anything
+    result`object` data returned from processing, anything
 
     '''
     finished = pyqtSignal()
@@ -39,9 +36,10 @@ class Worker(QRunnable):
         self.fn = fn
         self.args = args
         self.kwargs = kwargs
-        self.signals = WorkerSignals()
+        self.signals = WorkerSignals() #classe dei segnali da mandare indietro
         # Add the callback to our kwargs
-        self.kwargs['progress_callback'] = self.signals.progress
+        self.kwargs['progress_callback'] = self.signals.progress #serve per collegare la funzione che passo a emit
+        # e connect della classe sopra
 
 
     @pyqtSlot()

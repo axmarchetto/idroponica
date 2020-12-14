@@ -6,6 +6,7 @@ from PyQt5.QtCore import QThreadPool
 import time
 from interfaccia import Ui_MainWindow
 from appoggio import Worker
+import multithread
 
 
 # qua importo il builder che esce da qtdesigner
@@ -198,23 +199,34 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
                 print(self.sts_isteresi[1])
         if self.bandierine['crepuscolare']:
             self.uscite['luci'] = self.sts_isteresi[0]
-            #print('uscita luce' + str(self.uscite['luci']))
+            # print('uscita luce' + str(self.uscite['luci']))
 
     # GESTONE DEL MULTITHEREAD ESTERNO --- INIZIO
     def progress_fn(self, n):
-        print("%d%% done" % n)
+        multithread.avanzamento_funz(n)
+        # print("%d%% done" % n)
 
     def execute_this_fn(self, progress_callback):
-        for n in range(0, 5):
-            time.sleep(1)
-            progress_callback.emit(n * 100 / 4)
-        return "Done."
+        #QUA SOTTO LA PARTE COMMENTATA VA USATA SE NON UTILIZZO IL FILE DI APPOGGIO
+        # if self.uscite['ventola']:
+        #     #GPIO.output(self.cpuout, True)
+        #     messaggio = 'ventola accesa'
+        # else:
+        #     #GPIO.output(self.cpuout, False)
+        #     messaggio = 'ventola spenta'
+        # for n in range(0, 5):
+        #     time.sleep(1)
+        #     progress_callback.emit(n * 100 / 4)
+        messaggio = multithread.da_eseguire(self.uscite, progress_callback)
+        return messaggio
 
     def print_output(self, s):
-        print(s)
+        multithread.stampa_uscita_funz(s)
+        # print(s)
 
     def thread_complete(self):
-        print("THREAD COMPLETE!")
+        multithread.sottoprog_completato()
+        # print("THREAD COMPLETE!")
 
     def gest_multithread(self):
         worker = Worker(self.execute_this_fn)
@@ -241,6 +253,4 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
     def showTime10(self):
         self.gest_multithread()
 
-
     # il codice va qua sopra
-
