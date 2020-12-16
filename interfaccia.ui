@@ -1355,7 +1355,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>50</y>
+       <y>40</y>
        <width>160</width>
        <height>40</height>
       </rect>
@@ -1367,6 +1367,24 @@
      </property>
      <property name="text">
       <string>Livello Acqua:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lbllvl">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>40</y>
+       <width>160</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Livello OK</string>
      </property>
     </widget>
    </widget>

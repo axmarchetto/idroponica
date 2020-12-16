@@ -21,6 +21,13 @@
 # GPIO.output(uscitaluci, False)
 
 # INGRESSI
+#increp=13
+#inlvlacqua=15
+
+# GPIO.setup(increp, GPIO.IN)
+# GPIO.setup(inlvlacqua, GPIO.IN)
+
+#Mettere pull up
 
 
 def avanzamento_funz(n):
@@ -28,7 +35,10 @@ def avanzamento_funz(n):
 
 
 def da_eseguire(pass_valori, progress_callback):
-    ingressi = [0, 0]
+    ingressi = [0, 1]
+    # leggo gli ingressi
+    # ingressi[0]=GPIO.input(increp)
+    # ingressi[1] = GPIO.input(inlvlacqua)
     print(pass_valori)
     if pass_valori['ventola']:
         # GPIO.output(cpuout, True)
@@ -37,7 +47,7 @@ def da_eseguire(pass_valori, progress_callback):
         # GPIO.output(cpuout, False)
         mess = 'ventola spenta, '
 
-    if pass_valori['acqua']:
+    if pass_valori['acqua'] and not ingressi[0]:
         # GPIO.output(uscitaacqua, True)
         mess = mess + 'pompa acqua accesa, '
     else:
@@ -51,13 +61,14 @@ def da_eseguire(pass_valori, progress_callback):
         # GPIO.output(uscitaaria, False)
         mess = mess + 'pompa aria spenta, '
 
-    if pass_valori['luci']:
+    if pass_valori['luci'] and ingressi[1]:
         # GPIO.output(uscitaluci, True)
         mess = mess + 'luci accese'
     else:
         # GPIO.output(uscitaluci, False)
         mess = mess + 'luci spente'
 
+    #da fare tutta le gestione da qua foino a principake
     return ingressi
 
 

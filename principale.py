@@ -1,7 +1,7 @@
 # import RPi.GPIO as GPIO
-#import os
-#import ds18sensor
-#togliere i commenti qua sopra per raspberry
+# import os
+# import ds18sensor
+# togliere i commenti qua sopra per raspberry
 '''
 #togliere i commenti qua sopra per raspberry
 ANCHE DA RIGA 39 , 180  E 207
@@ -34,16 +34,14 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         # se metto qua una variabile funzuiona
         # variabili per riassumere lo stato della finestra
         self.uscite = {'acqua': 0, 'aria': 0, 'ventola': 0, 'pompaxy': 0, 'pompaphpiu': 0, 'pompaphmeno': 0, 'luci': 0}
-        self.ingressi = {'increpusc': 0, 'inlvlminacqua':0}
+        self.ingressi = {'increpusc': 0, 'inlvlminacqua': 0}
         self.bandierine = {'autotimer': True, 'okacqua': True, 'okaria': True, 'crepuscolare': True, 'livacqua': True}
         self.valori = {'acc': 40, 'delta': 5, 'oraon': 9, 'minon': 0, 'oraoff': 21, 'minoff': 0, 'vbatt': 13.8,
                        'tacqua': 22.4, 'ph': 7, 'EC': 2600, 'isteresi_luce': 10}
         self.sts_isteresi = [0, 0]
 
-
         # faccio oggetto  per il sensore dallas
         # self.dstemp = ds18sensor.Ds18b20_temp()
-
 
         # BOTTONI PER LA VENTOLA DELLA CPU
         self.ui.btnonfanpiu.clicked.connect(lambda: self.gest_temp_fan('acc', 'piu'))
@@ -65,10 +63,6 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.ui.btnlucioff.clicked.connect(lambda: self.gestione_manuale('luci', 'off'))
         self.ui.btncrppiu.clicked.connect(lambda: self.gest_temp_fan('isteresi_luce', 'piu'))
         self.ui.btncrpmeno.clicked.connect(lambda: self.gest_temp_fan('isteresi_luce', 'meno'))
-
-
-
-
 
         # metto il timer per azioni una volta al secondo
         timer = QtCore.QTimer(self)
@@ -187,9 +181,16 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         # print('vbatt')
 
     def gest_tacqua(self):
-        #DA TOGLIERE COMMENTO CON RASPBERRY
-        #self.valori['tacqua'] = self.dstemp.read_Ctemp()
+        # DA TOGLIERE COMMENTO CON RASPBERRY
+        # self.valori['tacqua'] = self.dstemp.read_Ctemp()
         self.ui.tmpacqua.setProperty("value", self.valori['tacqua'])
+
+    def gest_lvlacqua(self):
+        if self.ingressi['inlvlminacqua']:
+            self.ui.lbllvl.setText('LIVELLO MINIMO')
+            print('ATTENZIONE LIVELLO MINIMO ACQUA ')
+        else:
+            self.ui.lbllvl.setText('Livello OK')
 
     def gest_luce(self):
         if self.ingressi['increpusc'] != self.sts_isteresi[0]:
@@ -212,7 +213,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         # print("%d%% done" % n)
 
     def execute_this_fn(self, progress_callback):
-        #QUA SOTTO LA PARTE COMMENTATA VA USATA SE NON UTILIZZO IL FILE DI APPOGGIO
+        # QUA SOTTO LA PARTE COMMENTATA VA USATA SE NON UTILIZZO IL FILE DI APPOGGIO
         # if self.uscite['ventola']:
         #     #GPIO.output(self.cpuout, True)
         #     messaggio = 'ventola accesa'
@@ -223,6 +224,8 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         #     time.sleep(1)
         #     progress_callback.emit(n * 100 / 4)
         messaggio = multithread.da_eseguire(self.uscite, progress_callback)
+        self.ingressi['increpusc'] = messaggio[0]
+        self.ingressi['inlvlminacqua'] = messaggio[1]
         return messaggio
 
     def print_output(self, s):
@@ -254,6 +257,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.gest_vbatt()
         self.gest_luce()
         self.gest_tacqua()
+        self.gest_lvlacqua()
 
     def showTime10(self):
         self.gest_multithread()
