@@ -152,7 +152,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             # print('pompa ' + cosa + ' spenta')
             # print(self.uscite[cosa])
 
-    def measure_temp(self):
+    def measure_temp(self): # della CPU
         # dat ogliere la stringa  e lasciare il comando che inizia con os per raspberry
         temp = "temp= 47.5 'C"  # os.popen("vcgencmd measure_temp").readline()
         temp = temp.replace('temp=', '')
@@ -163,15 +163,14 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
     def gestventolacpu(self):
         cpuact = self.measure_temp()
         if cpuact >= self.valori['acc']:
-            # print ('accensione ventola')
+
             self.ui.lblstatoventola.setText('Ventola accesa')
-            # GPIO.output(self.cpuout, True)
+
             self.uscite['ventola'] = 1
 
         if cpuact <= (self.valori['acc'] - self.valori['delta']):
             self.ui.lblstatoventola.setText('Ventola spenta')
-            # print ('spegnimento ventola')
-            # GPIO.output(self.cpuout, False)
+
             self.uscite['ventola'] = 0
         # print(self.uscite['ventola'])
 
@@ -203,6 +202,8 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             else:
                 self.sts_isteresi[1] = self.sts_isteresi[1] + 1
                 print(self.sts_isteresi[1])
+        else:
+           self.sts_isteresi[1] = 0  #questa parte è da provare
         if self.bandierine['crepuscolare']:
             self.uscite['luci'] = self.sts_isteresi[0]
             # print('uscita luce' + str(self.uscite['luci']))
@@ -226,6 +227,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         messaggio = multithread.da_eseguire(self.uscite, progress_callback)
         self.ingressi['increpusc'] = messaggio[0]
         self.ingressi['inlvlminacqua'] = messaggio[1]
+        self.valori['tacqua']= messaggio[2]
         return messaggio
 
     def print_output(self, s):

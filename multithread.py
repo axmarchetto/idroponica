@@ -1,5 +1,5 @@
 # import RPi.GPIO as GPIO
-#
+# import ds18sensor
 # USCITE
 
 # cpuout = 11
@@ -24,22 +24,24 @@
 #increp=13
 #inlvlacqua=15
 
-# GPIO.setup(increp, GPIO.IN)
-# GPIO.setup(inlvlacqua, GPIO.IN)
+#GPIO.setup(increp, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#GPIO.setup(inlvlacqua, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-#Mettere pull up
-
+# faccio oggetto  per il sensore dallas
+#dstemp = ds18sensor.Ds18b20_temp()
 
 def avanzamento_funz(n):
     print("%d%% done" % n)
 
 
 def da_eseguire(pass_valori, progress_callback):
-    ingressi = [0, 1]
+    ingressi = [0, 0,22.5]
     # leggo gli ingressi
     # ingressi[0]=GPIO.input(increp)
     # ingressi[1] = GPIO.input(inlvlacqua)
     print(pass_valori)
+    #leggo la temperastura della CPU
+    #ingressi[2] = dstemp.read_Ctemp()
     if pass_valori['ventola']:
         # GPIO.output(cpuout, True)
         mess = 'ventola accesa, '
@@ -47,7 +49,7 @@ def da_eseguire(pass_valori, progress_callback):
         # GPIO.output(cpuout, False)
         mess = 'ventola spenta, '
 
-    if pass_valori['acqua'] and not ingressi[0]:
+    if pass_valori['acqua'] and not ingressi[1]:
         # GPIO.output(uscitaacqua, True)
         mess = mess + 'pompa acqua accesa, '
     else:
@@ -61,14 +63,13 @@ def da_eseguire(pass_valori, progress_callback):
         # GPIO.output(uscitaaria, False)
         mess = mess + 'pompa aria spenta, '
 
-    if pass_valori['luci'] and ingressi[1]:
+    if pass_valori['luci']:
         # GPIO.output(uscitaluci, True)
         mess = mess + 'luci accese'
     else:
         # GPIO.output(uscitaluci, False)
         mess = mess + 'luci spente'
 
-    #da fare tutta le gestione da qua foino a principake
     return ingressi
 
 
