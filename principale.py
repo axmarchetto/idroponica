@@ -2,10 +2,7 @@
 # import os
 # import ds18sensor
 # togliere i commenti qua sopra per raspberry
-'''
-#togliere i commenti qua sopra per raspberry
-ANCHE DA RIGA 39 , 180  E 207
-'''
+
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
@@ -31,7 +28,6 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         # lancio la finestra che ho datto in qt designer
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        # se metto qua una variabile funzuiona
         # variabili per riassumere lo stato della finestra
         self.uscite = {'acqua': 0, 'aria': 0, 'ventola': 0, 'pompaxy': 0, 'pompaphpiu': 0, 'pompaphmeno': 0, 'luci': 0}
         self.ingressi = {'increpusc': 0, 'inlvlminacqua': 0}
@@ -39,9 +35,6 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.valori = {'acc': 40, 'delta': 5, 'oraon': 9, 'minon': 0, 'oraoff': 21, 'minoff': 0, 'vbatt': 13.8,
                        'tacqua': 22.4, 'ph': 7, 'EC': 2600, 'isteresi_luce': 10}
         self.sts_isteresi = [0, 0]
-
-        # faccio oggetto  per il sensore dallas
-        # self.dstemp = ds18sensor.Ds18b20_temp()
 
         # BOTTONI PER LA VENTOLA DELLA CPU
         self.ui.btnonfanpiu.clicked.connect(lambda: self.gest_temp_fan('acc', 'piu'))
@@ -83,7 +76,6 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.bandierine['okacqua'] = self.ui.chkacquaok.isChecked()
         self.bandierine['okaria'] = self.ui.chkariaok.isChecked()
         self.bandierine['crepuscolare'] = self.ui.chkcrepuscolare.isChecked()
-        # print(self.bandierine)
         # abilitazione tasti manuale
         self.ui.btnpompaon.setEnabled(not self.ui.ckbclockok.isChecked())
         self.ui.btnpompaoff.setEnabled(not self.ui.ckbclockok.isChecked())
@@ -93,7 +85,6 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.ui.btnlucioff.setEnabled(not self.ui.chkcrepuscolare.isChecked())
 
     def gest_orario_on_off(self, tipo, tasto, valore):
-        # print('premunto '+tasto+' '+valore)
         if valore == 'piu':
             self.valori[tasto] = self.valori[tasto] + 15
             if self.valori[tasto] >= 60:
@@ -129,11 +120,8 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
 
     def gest_temp_fan(self, tasto, valore):
         if valore == 'piu':
-            # print('premuto tasto piu')
             self.valori[tasto] = self.valori[tasto] + 1
-            # print(str(self.cpufan[tasto]))
         else:
-            # print('premuto tasto meno')
             self.valori[tasto] = self.valori[tasto] - 1
         if tasto == 'acc':
             self.ui.tmponfan.setProperty("value", self.valori[tasto])
@@ -152,7 +140,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             # print('pompa ' + cosa + ' spenta')
             # print(self.uscite[cosa])
 
-    def measure_temp(self): # della CPU
+    def measure_temp(self):  # della CPU
         # dat ogliere la stringa  e lasciare il comando che inizia con os per raspberry
         temp = "temp= 47.5 'C"  # os.popen("vcgencmd measure_temp").readline()
         temp = temp.replace('temp=', '')
@@ -163,16 +151,12 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
     def gestventolacpu(self):
         cpuact = self.measure_temp()
         if cpuact >= self.valori['acc']:
-
             self.ui.lblstatoventola.setText('Ventola accesa')
-
             self.uscite['ventola'] = 1
 
         if cpuact <= (self.valori['acc'] - self.valori['delta']):
             self.ui.lblstatoventola.setText('Ventola spenta')
-
             self.uscite['ventola'] = 0
-        # print(self.uscite['ventola'])
 
     def gest_vbatt(self):
         # print(self.valori['vbatt'])
@@ -203,7 +187,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
                 self.sts_isteresi[1] = self.sts_isteresi[1] + 1
                 print(self.sts_isteresi[1])
         else:
-           self.sts_isteresi[1] = 0  #questa parte è da provare
+            self.sts_isteresi[1] = 0
         if self.bandierine['crepuscolare']:
             self.uscite['luci'] = self.sts_isteresi[0]
             # print('uscita luce' + str(self.uscite['luci']))
@@ -214,29 +198,17 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         # print("%d%% done" % n)
 
     def execute_this_fn(self, progress_callback):
-        # QUA SOTTO LA PARTE COMMENTATA VA USATA SE NON UTILIZZO IL FILE DI APPOGGIO
-        # if self.uscite['ventola']:
-        #     #GPIO.output(self.cpuout, True)
-        #     messaggio = 'ventola accesa'
-        # else:
-        #     #GPIO.output(self.cpuout, False)
-        #     messaggio = 'ventola spenta'
-        # for n in range(0, 5):
-        #     time.sleep(1)
-        #     progress_callback.emit(n * 100 / 4)
         messaggio = multithread.da_eseguire(self.uscite, progress_callback)
         self.ingressi['increpusc'] = messaggio[0]
         self.ingressi['inlvlminacqua'] = messaggio[1]
-        self.valori['tacqua']= messaggio[2]
+        self.valori['tacqua'] = messaggio[2]
         return messaggio
 
     def print_output(self, s):
         multithread.stampa_uscita_funz(s)
-        # print(s)
 
     def thread_complete(self):
         multithread.sottoprog_completato()
-        # print("THREAD COMPLETE!")
 
     def gest_multithread(self):
         worker = Worker(self.execute_this_fn)
@@ -253,15 +225,16 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         if time.second() % 2 == 0:
             text = text[:2] + ' ' + text[3:]
         self.ui.lcdclock.display(text)
-        self.gestventolacpu()
         self.chk_handler()
-        self.gest_timer_orario()
-        self.gest_vbatt()
         self.gest_luce()
-        self.gest_tacqua()
         self.gest_lvlacqua()
 
     def showTime10(self):
         self.gest_multithread()
+        self.gest_timer_orario()
+        self.gestventolacpu()
+        self.gest_tacqua()
+        self.gest_vbatt()
+
 
     # il codice va qua sopra
