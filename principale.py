@@ -33,7 +33,8 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.ingressi = {'increpusc': 0, 'inlvlminacqua': 0}
         self.bandierine = {'autotimer': True, 'okacqua': True, 'okaria': True, 'crepuscolare': True, 'livacqua': True}
         self.valori = {'acc': 40, 'delta': 5, 'oraon': 9, 'minon': 0, 'oraoff': 21, 'minoff': 0, 'vbatt': 13.8,
-                       'tacqua': 22.4, 'ph': 7, 'EC': 2600, 'isteresi_luce': 10}
+                       'tacqua': 22.4, 'ph': 7, 'EC': 2600, 'isteresi_luce': 10, 'freqchk': 15, 'phcorrettore': 5,
+                       'fertxy': 5}
         self.sts_isteresi = [0, 0]
         self.master_counter = 1
 
@@ -57,7 +58,13 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.ui.btnlucioff.clicked.connect(lambda: self.gestione_manuale('luci', 'off'))
         self.ui.btncrppiu.clicked.connect(lambda: self.gest_temp_fan('isteresi_luce', 'piu'))
         self.ui.btncrpmeno.clicked.connect(lambda: self.gest_temp_fan('isteresi_luce', 'meno'))
-
+        # BOTTONI PER LA GESTIONE DI PH ETC
+        self.ui.btnfchkpiu.clicked.connect(lambda: self.gest_temp_fan('freqchk', 'piu'))
+        self.ui.btnfchkmeno.clicked.connect(lambda: self.gest_temp_fan('freqchk', 'meno'))
+        self.ui.btnphpiu.clicked.connect(lambda: self.gest_temp_fan('phcorrettore', 'piu'))
+        self.ui.btnphmeno.clicked.connect(lambda: self.gest_temp_fan('phcorrettore', 'meno'))
+        self.ui.btnxypiu.clicked.connect(lambda: self.gest_temp_fan('fertxy', 'piu'))
+        self.ui.btnxymeno.clicked.connect(lambda: self.gest_temp_fan('fertxy', 'meno'))
         # metto il timer per azioni una volta al secondo
         timer = QtCore.QTimer(self)
         timer.timeout.connect(self.showTime)
@@ -125,6 +132,12 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             self.ui.tmpdeltafan.setProperty("value", self.valori[tasto])
         if tasto == 'isteresi_luce':
             self.ui.tmpcrp.setProperty("value", self.valori[tasto])
+        if tasto == 'freqchk':
+            self.ui.tmpfchk.setProperty("value", self.valori[tasto])
+        if tasto == 'phcorrettore':
+            self.ui.tmpph.setProperty("value", self.valori[tasto])
+        if tasto == 'fertxy':
+            self.ui.tmpxy.setProperty("value", self.valori[tasto])
 
     def gestione_manuale(self, cosa, stato):
         if stato == 'on':
@@ -217,7 +230,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         if time.second() % 2 == 0:
             text = text[:2] + ' ' + text[3:]
         self.ui.lcdclock.display(text)
-        #Da eseguire una volta al secondo
+        # Da eseguire una volta al secondo
         self.chk_handler()
         self.gest_luce()
         self.gest_lvlacqua()
@@ -227,7 +240,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
 
     def temporizzatore(self):
         print(self.master_counter)
-        if self.master_counter  == 1:
+        if self.master_counter == 1:
             print('primo giro')
             self.gest_tacqua()
             self.gest_vbatt()
@@ -240,10 +253,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             self.gest_tacqua()
             self.gest_vbatt()
         if self.master_counter % 3600 == 0:  # una volta ogni 15min
-            self.master_counter=0
+            self.master_counter = 0
         self.master_counter += 1
-
-
-
 
     # il codice va qua sopra

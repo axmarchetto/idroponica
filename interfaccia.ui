@@ -81,7 +81,7 @@
       <number>0</number>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnplusmin_3">
+    <widget class="QPushButton" name="btnfchkpiu">
      <property name="geometry">
       <rect>
        <x>360</x>
@@ -99,7 +99,7 @@
       <string>+</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnminmin_3">
+    <widget class="QPushButton" name="btnfchkmeno">
      <property name="geometry">
       <rect>
        <x>400</x>
@@ -117,7 +117,7 @@
       <string>-</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnminmax_3">
+    <widget class="QPushButton" name="btnxymeno">
      <property name="geometry">
       <rect>
        <x>400</x>
@@ -135,7 +135,7 @@
       <string>-</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnplusmax_3">
+    <widget class="QPushButton" name="btnxypiu">
      <property name="geometry">
       <rect>
        <x>360</x>
@@ -177,7 +177,7 @@
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
-    <widget class="QLCDNumber" name="tmpcpumax_3">
+    <widget class="QLCDNumber" name="tmpxy">
      <property name="geometry">
       <rect>
        <x>310</x>
@@ -334,7 +334,7 @@
       <enum>Qt::Vertical</enum>
      </property>
     </widget>
-    <widget class="QLCDNumber" name="tmpcpumax_4">
+    <widget class="QLCDNumber" name="tmpfchk">
      <property name="geometry">
       <rect>
        <x>310</x>
@@ -356,10 +356,10 @@
       <enum>QLCDNumber::Flat</enum>
      </property>
      <property name="value" stdset="0">
-      <double>5.000000000000000</double>
+      <double>15.000000000000000</double>
      </property>
      <property name="intValue" stdset="0">
-      <number>5</number>
+      <number>15</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_15">
@@ -386,7 +386,7 @@
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
-    <widget class="QLCDNumber" name="tmpcpumax_5">
+    <widget class="QLCDNumber" name="tmpph">
      <property name="geometry">
       <rect>
        <x>310</x>
@@ -414,7 +414,7 @@
       <number>5</number>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnplusmax_4">
+    <widget class="QPushButton" name="btnphpiu">
      <property name="geometry">
       <rect>
        <x>360</x>
@@ -432,7 +432,7 @@
       <string>+</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnminmax_4">
+    <widget class="QPushButton" name="btnphmeno">
      <property name="geometry">
       <rect>
        <x>400</x>
