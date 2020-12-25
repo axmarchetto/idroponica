@@ -35,6 +35,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         self.valori = {'acc': 40, 'delta': 5, 'oraon': 9, 'minon': 0, 'oraoff': 21, 'minoff': 0, 'vbatt': 13.8,
                        'tacqua': 22.4, 'ph': 7, 'EC': 2600, 'isteresi_luce': 10}
         self.sts_isteresi = [0, 0]
+        self.master_counter = 1
 
         # BOTTONI PER LA VENTOLA DELLA CPU
         self.ui.btnonfanpiu.clicked.connect(lambda: self.gest_temp_fan('acc', 'piu'))
@@ -61,11 +62,6 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         timer = QtCore.QTimer(self)
         timer.timeout.connect(self.showTime)
         timer.start(1000)  # in millisecondi
-
-        # metto il timer per azioni una volta al secondo
-        timer10 = QtCore.QTimer(self)
-        timer10.timeout.connect(self.showTime10)
-        timer10.start(10000)  # in millisecondi
 
     # fine di init
 
@@ -180,9 +176,6 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             if self.sts_isteresi[1] >= self.ui.tmpcrp.value():
                 self.sts_isteresi[0] = self.ingressi['increpusc']
                 self.sts_isteresi[1] = 0
-                # if self.bandierine['crepuscolare']:
-                #     self.uscite['luci'] = self.sts_isteresi[0]
-                #     print('uscita luce' + str(self.uscite['luci']))
             else:
                 self.sts_isteresi[1] = self.sts_isteresi[1] + 1
                 print(self.sts_isteresi[1])
@@ -190,7 +183,6 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             self.sts_isteresi[1] = 0
         if self.bandierine['crepuscolare']:
             self.uscite['luci'] = self.sts_isteresi[0]
-            # print('uscita luce' + str(self.uscite['luci']))
 
     # GESTONE DEL MULTITHEREAD ESTERNO --- INIZIO
     def progress_fn(self, n):
@@ -225,16 +217,33 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         if time.second() % 2 == 0:
             text = text[:2] + ' ' + text[3:]
         self.ui.lcdclock.display(text)
+        #Da eseguire una volta al secondo
         self.chk_handler()
         self.gest_luce()
         self.gest_lvlacqua()
-
-    def showTime10(self):
-        self.gest_multithread()
+        self.temporizzatore()
         self.gest_timer_orario()
         self.gestventolacpu()
-        self.gest_tacqua()
-        self.gest_vbatt()
+
+    def temporizzatore(self):
+        print(self.master_counter)
+        if self.master_counter  == 1:
+            print('primo giro')
+            self.gest_tacqua()
+            self.gest_vbatt()
+        if self.master_counter % 10 == 0:  # una volta ogni 10 sec
+            self.gest_multithread()
+            print('uno ogni 10')
+        if self.master_counter % 60 == 0:  # una volta al minuto
+            print('una volta al minuto ')
+        if self.master_counter % 900 == 0:  # una volta ogni 15min
+            self.gest_tacqua()
+            self.gest_vbatt()
+        if self.master_counter % 3600 == 0:  # una volta ogni 15min
+            self.master_counter=0
+        self.master_counter += 1
+
+
 
 
     # il codice va qua sopra
