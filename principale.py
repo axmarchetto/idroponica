@@ -11,6 +11,7 @@ import time
 from interfaccia import Ui_MainWindow
 from appoggio import Worker
 import multithread
+import mqtt_uts
 
 
 # qua importo il builder che esce da qtdesigner
@@ -222,6 +223,25 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
         worker.signals.progress.connect(self.progress_fn)
         self.threadpool.start(worker)
 
+    def gest_mqtt(self):
+        worker2 = Worker(self.execute_this_fn2)
+        #worker.signals.result.connect(self.print_output)
+        #worker.signals.finished.connect(self.thread_complete)
+        #worker.signals.progress.connect(self.progress_fn)
+        self.threadpool.start(worker2)
+    def execute_this_fn2(self, progress_callback):
+        print('siamo dentro alla funzione2')
+        mqtt_uts.gest_mqtt(self.uscite, progress_callback)
+
+        ##questa quella della precedente
+        # messaggio = multithread.da_eseguire(self.uscite, progress_callback)
+        # self.ingressi['increpusc'] = messaggio[0]
+        # self.ingressi['inlvlminacqua'] = messaggio[1]
+        # self.valori['tacqua'] = messaggio[2]
+        # return messaggio
+
+
+
     # GESTONE DEL MULTITHEREAD ESTERNO --- FINE
 
     def showTime(self):
@@ -246,6 +266,7 @@ class finestra(QtWidgets.QMainWindow):  # se la finestra è main.py allora non v
             self.gest_vbatt()
         if self.master_counter % 10 == 0:  # una volta ogni 10 sec
             self.gest_multithread()
+            self.gest_mqtt()
             print('uno ogni 10')
         if self.master_counter % 60 == 0:  # una volta al minuto
             print('una volta al minuto ')

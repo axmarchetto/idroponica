@@ -49,8 +49,8 @@ client.on_connect = on_connect
 client.on_disconnect = on_disconnect
 #client.on_log=on_log
 
-# run_main = False
-# run_flag = True
+run_main = False
+run_flag = True
 
 
 def gest_connessione():
@@ -99,39 +99,27 @@ def gest_disconnessione():
     client.disconnect()
     client.loop_stop()
 
-def trasforma (uscite):
-    stringaout=''
-    for key, value in uscite.items():
-        stringaout += key+':'+str(value)+';'
-    return stringaout
 
 
+while run_flag:
+   # print('run flag:', run_flag)
 
-def gest_mqtt(uscite, progress_callback):
-    run_flag=True
-    run_main=False
-    while run_flag:
-       # print('run flag:', run_flag)
+    run_flag = gest_connessione()
+    if not run_main and run_flag:
+        run_main = gest_loop()
+    if run_main:
+        try:
+            # Do main loop
+            print("in main loop")  # publish and subscribe here
+            client.publish("casadiandrea/idroponica/valori", "prova ultima di adesso ")
+            time.sleep(3)
+            run_flag=False
 
-        run_flag = gest_connessione()
-        if not run_main and run_flag:
-            run_main = gest_loop()
-        if run_main:
-            try:
-                # Do main loop
-                print("in main loop")  # publish and subscribe here
-                print (uscite)
-                client.publish("casadiandrea/idroponica/valori/test",trasforma(uscite))
-                # for key, value in uscite.items():
-                #     client.publish("casadiandrea/idroponica/valori/"+key, value)
-                #     time.sleep(1)
-                run_flag=False
+            ##Added try block to catch keyborad interrupt  to break loop so we
+            ##don't leave loop thread running.
 
-                ##Added try block to catch keyborad interrupt  to break loop so we
-                ##don't leave loop thread running.
+        except(KeyboardInterrupt):
+            print("keyboard Interrupt so ending")
+            run_flag = False
 
-            except(KeyboardInterrupt):
-                print("keyboard Interrupt so ending")
-                run_flag = False
-
-    gest_disconnessione()
+gest_disconnessione()
